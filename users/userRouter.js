@@ -2,33 +2,42 @@ const express = require('express');
 const router = express.Router();
 const userDb = require('./userDb');
 
-router.post('/', (req, res) => {
-  // do your magic!
+router.post('/', validateUser(), async (req, res, next) => {
+  try {
+    const userName = {
+      name: req.body.name,
+    };
+    const add = await userDb.insert(userName);
+
+    res.status(201).json(add);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.post('/:id/posts', (req, res) => {
-  // do your magic!
-});
+// router.post('/:id/posts', (req, res) => {
+//   // do your magic!
+// });
 
-router.get('/', (req, res) => {
-  // do your magic!
-});
+// router.get('/', (req, res) => {
+//   // do your magic!
+// });
 
-router.get('/:id', (req, res) => {
-  // do your magic!
-});
+// router.get('/:id', (req, res) => {
+//   // do your magic!
+// });
 
-router.get('/:id/posts', (req, res) => {
-  // do your magic!
-});
+// router.get('/:id/posts', (req, res) => {
+//   // do your magic!
+// });
 
-router.delete('/:id', (req, res) => {
-  // do your magic!
-});
+// router.delete('/:id', (req, res) => {
+//   // do your magic!
+// });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
-});
+// router.put('/:id', (req, res) => {
+//   // do your magic!
+// });
 
 //custom middleware
 
@@ -48,15 +57,17 @@ function validateUserId(req, res, next) {
     });
 }
 
-function validateUser(req, res, next) {
-  if (!req.body) {
-    return res.status(400).json({ message: 'missing user data' });
-  }
+function validateUser() {
+  return (req, res, next) => {
+    if (!req.body) {
+      return res.status(400).json({ message: 'missing user data' });
+    }
 
-  if (!req.body.name) {
-    return res.status(400).json({ message: 'missing required name field' });
-  }
-  next();
+    if (!req.body.name) {
+      return res.status(400).json({ message: 'missing required name field' });
+    }
+    next();
+  };
 }
 
 function validatePost(req, res, next) {
