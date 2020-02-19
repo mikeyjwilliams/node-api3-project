@@ -3,6 +3,7 @@ const server = express();
 server.use(express.json());
 
 const userRouter = require('./users/userRouter');
+const postRouter = require('./posts/postRouter');
 server.use(logger);
 
 server.get('/', (req, res) => {
@@ -10,6 +11,7 @@ server.get('/', (req, res) => {
 });
 
 server.use('/api/users', userRouter);
+server.use('/api/posts', postRouter);
 
 server.use((req, res) => {
 	res.status(404).json({ message: '404 page not found fail whale' });
