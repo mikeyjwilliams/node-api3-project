@@ -37,7 +37,19 @@ router.get('/:id', validateUserId, (req, res, next) => {
 	}
 });
 
-router.get('/:id/posts', validateUserId, async (req, res, next) => {});
+router.get('/:id/posts', validateUserId, async (req, res, next) => {
+	try {
+		const getUser = await userDb.getUserPosts(req.user.id);
+		if (getUser) {
+			res.status(200).json(getUser);
+		} else {
+			res.status(400).json({ message: 'error finding ID of specific user' });
+		}
+	} catch (err) {
+		console.log(err);
+		next(err);
+	}
+});
 
 // router.delete('/:id', (req, res) => {
 //   // do your magic!
