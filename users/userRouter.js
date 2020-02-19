@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userDb = require('./userDb');
+const postDb = require('../posts/postDb');
 
 router.post('/', validateUser(), async (req, res, next) => {
 	try {
@@ -15,9 +16,24 @@ router.post('/', validateUser(), async (req, res, next) => {
 	}
 });
 
-// router.post('/:id/posts', (req, res) => {
-//   // do your magic!
-// });
+router.post(
+	'/:id/posts',
+	validateUserId,
+	validatePost,
+	async (req, res, next) => {
+		try {
+			const newPost = {
+				user_id: req.user.id,
+				text: req.body.text
+			};
+			const post = await postDb.insert(newPost);
+			res.status(201).json(post);
+		} catch (err) {
+			console.log(err);
+			next(err);
+		}
+	}
+);
 
 router.get('/', async (req, res, next) => {
 	try {
@@ -72,6 +88,7 @@ function validateUserId(req, res, next) {
 		.getById(req.params.id)
 		.then((user) => {
 			if (user) {
+				console.log(user);
 				req.user = user;
 				next();
 			} else {
