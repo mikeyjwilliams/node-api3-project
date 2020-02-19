@@ -18,7 +18,7 @@ router.post('/', validateUser(), async (req, res, next) => {
 
 router.post(
 	'/:id/posts',
-	validateUserId,
+	validateUserId(),
 	validatePost,
 	async (req, res, next) => {
 		try {
@@ -44,7 +44,7 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-router.get('/:id', validateUserId, (req, res, next) => {
+router.get('/:id', validateUserId(), (req, res, next) => {
 	try {
 		res.status(200).json(req.user);
 	} catch (err) {
@@ -53,7 +53,7 @@ router.get('/:id', validateUserId, (req, res, next) => {
 	}
 });
 
-router.get('/:id/posts', validateUserId, async (req, res, next) => {
+router.get('/:id/posts', validateUserId(), async (req, res, next) => {
 	try {
 		const getUser = await userDb.getUserPosts(req.user.id);
 		if (getUser) {
@@ -67,7 +67,7 @@ router.get('/:id/posts', validateUserId, async (req, res, next) => {
 	}
 });
 
-router.delete('/:id', validateUserId, async (req, res, next) => {
+router.delete('/:id', validateUserId(), async (req, res, next) => {
 	try {
 		const removeUser = await userDb.remove(req.user.id);
 		res.status(204).end();
@@ -88,22 +88,29 @@ router.put('/:id', validateUserId, validateUser(), async (req, res, next) => {
 	}
 });
 
+router.post('/:id/posts', validateUserId(), async (req, res, next) => {
+	console.log('req', req.user);
+	res.send('post');
+});
+
 //custom middleware
 
-function validateUserId(req, res, next) {
-	userDb
-		.getById(req.params.id)
-		.then((user) => {
-			if (user) {
-				req.user = user;
-				next();
-			} else {
-				res.status(404).json({ message: 'invalid user id' });
-			}
-		})
-		.catch((err) => {
-			next(err);
-		});
+function validateUserId(userId) {
+	return (req, res, next) => {
+		userDb
+			.getById(req.params.id)
+			.then((user) => {
+				if (user) {
+					req.user = user;
+					next();
+				} else {
+					res.status(404).json({ message: 'invalid user id' });
+				}
+			})
+			.catch((err) => {
+				next(err);
+			});
+	};
 }
 
 function validateUser() {

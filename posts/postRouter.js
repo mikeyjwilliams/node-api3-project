@@ -24,9 +24,9 @@ router.get('/:id', validatePostId(), async (req, res, next) => {
 	}
 });
 
-// router.delete('/:id', (req, res) => {
-// 	// do your magic!
-// });
+router.delete('/:id', validatePostId(), async (req, res, next) => {
+	console.log(req.post);
+});
 
 // router.put('/:id', (req, res) => {
 // 	// do your magic!
