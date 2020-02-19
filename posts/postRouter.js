@@ -5,7 +5,7 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req, res, next) => {
 	try {
-		const posts = postDb.get();
+		const posts = await postDb.get();
 		console.log(posts);
 		res.status(200).json(posts);
 	} catch (err) {
