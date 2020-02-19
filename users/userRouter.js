@@ -77,9 +77,16 @@ router.delete('/:id', validateUserId, async (req, res, next) => {
 	}
 });
 
-// router.put('/:id', (req, res) => {
-//   // do your magic!
-// });
+router.put('/:id', validateUserId, validateUser(), async (req, res, next) => {
+	const { id } = req.user;
+	try {
+		const updateUser = await userDb.update(id, req.body);
+		res.status(200).json(updateUser);
+	} catch (err) {
+		console.log(err);
+		next(err);
+	}
+});
 
 //custom middleware
 
