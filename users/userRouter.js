@@ -3,25 +3,30 @@ const router = express.Router();
 const userDb = require('./userDb');
 
 router.post('/', validateUser(), async (req, res, next) => {
-  try {
-    const userName = {
-      name: req.body.name,
-    };
-    const add = await userDb.insert(userName);
+	try {
+		const userName = {
+			name: req.body.name
+		};
+		const add = await userDb.insert(userName);
 
-    res.status(201).json(add);
-  } catch (error) {
-    next(error);
-  }
+		res.status(201).json(add);
+	} catch (error) {
+		next(error);
+	}
 });
 
 // router.post('/:id/posts', (req, res) => {
 //   // do your magic!
 // });
 
-// router.get('/', (req, res) => {
-//   // do your magic!
-// });
+router.get('/', async (req, res, next) => {
+	try {
+		const post = await userDb.get();
+		res.status(200).json(post);
+	} catch (err) {
+		next(err);
+	}
+});
 
 // router.get('/:id', (req, res) => {
 //   // do your magic!
@@ -42,42 +47,42 @@ router.post('/', validateUser(), async (req, res, next) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-  userDb
-    .getById(req.params.id)
-    .then(user => {
-      if (user) {
-        req.user = user;
-        next();
-      } else {
-        res.status(404).json({ message: 'invalid user id' });
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
+	userDb
+		.getById(req.params.id)
+		.then((user) => {
+			if (user) {
+				req.user = user;
+				next();
+			} else {
+				res.status(404).json({ message: 'invalid user id' });
+			}
+		})
+		.catch((err) => {
+			next(err);
+		});
 }
 
 function validateUser() {
-  return (req, res, next) => {
-    if (!req.body) {
-      return res.status(400).json({ message: 'missing user data' });
-    }
+	return (req, res, next) => {
+		if (!req.body) {
+			return res.status(400).json({ message: 'missing user data' });
+		}
 
-    if (!req.body.name) {
-      return res.status(400).json({ message: 'missing required name field' });
-    }
-    next();
-  };
+		if (!req.body.name) {
+			return res.status(400).json({ message: 'missing required name field' });
+		}
+		next();
+	};
 }
 
 function validatePost(req, res, next) {
-  if (!req.body) {
-    return res.status(400).json({ message: 'missing post data' });
-  }
-  if (!req.body.text) {
-    return res.status(400).json({ message: 'missing required text field' });
-  }
-  next();
+	if (!req.body) {
+		return res.status(400).json({ message: 'missing post data' });
+	}
+	if (!req.body.text) {
+		return res.status(400).json({ message: 'missing required text field' });
+	}
+	next();
 }
 
 module.exports = router;
