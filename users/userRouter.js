@@ -98,7 +98,6 @@ function validateUserId(req, res, next) {
 		.getById(req.params.id)
 		.then((user) => {
 			if (user) {
-				console.log(user);
 				req.user = user;
 				next();
 			} else {
