@@ -70,7 +70,7 @@ router.get('/:id/posts', validateUserId, async (req, res, next) => {
 router.delete('/:id', validateUserId, async (req, res, next) => {
 	try {
 		const removeUser = await userDb.remove(req.user.id);
-		res.status(204).json(removeUser);
+		res.status(204).end();
 	} catch (err) {
 		console.log(err);
 		next(err);
