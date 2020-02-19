@@ -28,13 +28,16 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-// router.get('/:id', (req, res) => {
-//   // do your magic!
-// });
+router.get('/:id', validateUserId, (req, res, next) => {
+	try {
+		res.status(200).json(req.user);
+	} catch (err) {
+		console.log(err);
+		next(err);
+	}
+});
 
-// router.get('/:id/posts', (req, res) => {
-//   // do your magic!
-// });
+router.get('/:id/posts', validateUserId, async (req, res, next) => {});
 
 // router.delete('/:id', (req, res) => {
 //   // do your magic!
