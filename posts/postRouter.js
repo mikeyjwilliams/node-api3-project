@@ -1,12 +1,12 @@
 const express = require('express');
 const postDb = require('./postDb');
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 router.get('/', async (req, res, next) => {
 	try {
 		const posts = await postDb.get();
-		console.log(posts);
+		//console.log(posts);
 		res.status(200).json(posts);
 	} catch (err) {
 		console.log(err);
@@ -14,9 +14,15 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-// router.get('/:id', validatePostId(), async (req, res, next) => {
-// 	// do your magic!
-// });
+router.get('/:id', validatePostId(), async (req, res, next) => {
+	try {
+		const post = await postDb.getById(req.post.id);
+		res.status(200).json(post);
+	} catch (err) {
+		console.log(err);
+		next(err);
+	}
+});
 
 // router.delete('/:id', (req, res) => {
 // 	// do your magic!
@@ -35,6 +41,10 @@ function validatePostId(postId) {
 			.then((post) => {
 				if (post) {
 					req.post = post;
+
+					next();
+
+					//console.log('postId', req.post);
 				} else {
 					return res
 						.status(400)
@@ -45,8 +55,6 @@ function validatePostId(postId) {
 				console.log(err);
 				next(err);
 			});
-
-		next();
 	};
 }
 
